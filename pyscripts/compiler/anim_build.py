@@ -360,8 +360,10 @@ class AnimBuild():
             x, y, z, u, v, w = struct.unpack(endianstring + "ffffff", data_content[: 24])
             self.data["Vert"].append({"x": x, "y": y, "z": z, "u": u, "v": v, "w": w})
             data_content = data_content[24: ]
-
-        hash_dict_len = struct.unpack(endianstring + "I", data_content[: 4])[0]
+        try:
+            hash_dict_len = struct.unpack(endianstring + "I", data_content[: 4])[0]
+        except:
+            hash_dict_len=0
         data_content = data_content[4: ]
 
         for hash_idx in range(hash_dict_len):

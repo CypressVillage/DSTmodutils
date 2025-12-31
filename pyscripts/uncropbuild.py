@@ -2,7 +2,34 @@ import json
 import os
 from PIL import Image
 import sys
+from PIL import Image
 
+def paste(dst_img, src_img, box):
+    """
+    纯 PIL 实现的精确粘贴（无 numpy），保证像素值不变。
+    原理：分别 paste R/G/B/A 四个单通道图像（单通道 paste 是直接赋值，无 blend）。
+    """
+    if dst_img.mode != "RGBA":
+        raise ValueError("dst_img must be in 'RGBA' mode")
+    
+    src = src_img.convert("RGBA")
+    x, y = box
+    
+    # 分离通道
+    r, g, b, a = src.split()
+    channels = [r, g, b, a]
+    
+    # 提取 dst 的四个通道（注意：split() 返回 tuple，需转 list 才能修改）
+    dr, dg, db, da = dst_img.split()
+    dst_channels = [dr.copy(), dg.copy(), db.copy(), da.copy()]  # 必须 copy！否则只读
+    
+    # 分别粘贴每个单通道（单通道 paste 不会 blend，是直接覆盖）
+    for i, ch in enumerate(channels):
+        dst_channels[i].paste(ch, box)
+    
+    # 合并并写回
+    result = Image.merge("RGBA", dst_channels)
+    dst_img.paste(result)
 def process_json_and_images(json_path):
     # 读取 JSON 文件
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -43,7 +70,7 @@ def process_json_and_images(json_path):
                 img = img.convert("RGBA")
 
                 # 创建透明新画布
-                new_img = Image.new("RGBA", (new_w, new_h), (0, 0, 0, 0))
+                new_img = Image.new("RGBA", (new_w, new_h), (0,0,0, 0))
 
                 # 原图中要对齐到新画布中心的点（注意：PIL 坐标是 (x, y)，即 (宽方向, 高方向)）
                 # 原图中的参考点：(w/2 + x, h/2 + y) —— 注意：x 是水平偏移，y 是垂直偏移
@@ -59,7 +86,7 @@ def process_json_and_images(json_path):
                 paste_y = int(dst_center_y - src_center_y)
 
                 # 粘贴原图到新画布
-                new_img.paste(img, (paste_x, paste_y), img)
+                paste(new_img,img, (paste_x, paste_y))
 
                 # 保存覆盖原图
                 new_img.save(img_path)

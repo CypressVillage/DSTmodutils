@@ -664,7 +664,7 @@
 
         #imgpanel {
             position: fixed;
-            top: 20%;
+            top: 50%;
             left: 0;
             width: 20%;
             min-width: 5em;
@@ -733,6 +733,9 @@
             padding: 0;
             background-color: #0000002c;
             margin-left: 0.1em;
+        }
+        #detail pre{
+            overflow:auto;
         }
     </style>
 </head>
@@ -880,11 +883,14 @@
             save: "保存build.json",
             dropjson: "anim/build json",
             load: "自动加载根目录文件",
+            screenshot:"截图",
             selectedBA: "已选bank/anim",
             selectedFolder: "已选文件夹",
             onion: '洋葱皮',
             editmode: '编辑模式',
             title: '动画播放器',
+            pagetitle:'饥荒动画播放器',
+            layer:'静态图层显示',
             detail: `打开build.json和anim.json以播放动画
 默认该html文件与图片所在目录相同，如果不同需要手动输入图片路径，比如C:/Users/x/Desktop/anim/
 滚轮改变图片frame
@@ -904,18 +910,21 @@
             prevframe: "Prev",
             save: "Save build.json",
             load: "Load Root Files",
+            screenshot: "Screenshot",
             selectedBA: "Selected bank/anim",
-            dropjson: "anim/build json",
+            dropjson: "Open json",
             selectedFolder: "Selected Folder",
             onion: 'Onion Skin',
             editmode: 'Edit Mode',
             title: 'Animation Player',
+            pagetitle: 'DS Anim Player',
+            layer:'Layers',
             detail: `Open build.json and anim.json to play animation
-The default html file is the same as the image directory. If it is different, you need to manually enter image path, such as C:/Users/x/Desktop/anim/
+This index.html file is expected to be located in the same directory as the image folders. If it is different, you need to manually enter image path, such as C:/Users/x/Desktop/anim/
 Mouse wheel to change image frame
 Drag the image with the mouse
 Parameters: image pivot (px, py), zoom (sx, sy), translation (tx, ty), rotation (an), layer order (z-index) (the larger the value, the closer to the front, the real value is 50-zindex)
-In edit mode, you can move image via key wsad and arrows, or drag. The offset will be saved into build.
+In edit mode, you can move image via key WASD and arrows, or drag. The offset will take effect in all animations.
 `
         };
         let language = "zh";
@@ -1015,6 +1024,7 @@ In edit mode, you can move image via key wsad and arrows, or drag. The offset wi
             document.getElementById( "PrevFramePauseButton" ).innerHTML = strings.prevframe;
             document.getElementById( "dropareasfloater" ).firstElementChild.children[ 0 ].innerHTML = strings.save;
             document.getElementById( "dropareasfloater" ).firstElementChild.children[ 1 ].innerHTML = strings.load;
+            document.getElementById( "dropareasfloater" ).firstElementChild.children[ 2 ].innerHTML = strings.screenshot;
             document.getElementById( "drop-area" ).innerHTML = strings.dropjson;
             document.getElementById( "dropZone" ).innerHTML = strings.selectedFolder;
             document.getElementById( "playPauseButton" ).innerHTML = strings.play;
@@ -1025,6 +1035,8 @@ In edit mode, you can move image via key wsad and arrows, or drag. The offset wi
             document.getElementsByClassName( "paper-switch-1-label" )[ 0 ].innerHTML = strings.serverstate;
             document.getElementsByClassName( "title" )[ 0 ].innerHTML = strings.title;
             document.getElementById( "detail" ).firstElementChild.innerHTML = strings.detail;
+            document.getElementById( "imgpanelhead" ).innerHTML = strings.layer;
+            document.title=strings.pagetitle;
         }
         ChangeLanguage();
         dropAreasWrapper.addEventListener( 'mouseenter', showFloat );

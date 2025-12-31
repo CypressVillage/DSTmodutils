@@ -565,7 +565,10 @@ class AnimBuild():
             try_makedirs(symbol_path)
             for frame in frames:
                 frame_name = f"{symbol_name}-{frame['framenum']}"
-                self.symbol_images[frame_name].save(os.path.join(symbol_path, f"{symbol_name}-{frame['framenum']}.png"))
+                try:
+                    self.symbol_images[frame_name].save(os.path.join(symbol_path, f"{symbol_name}-{frame['framenum']}.png"))
+                except:
+                    print("failed to save",symbol_name,frame['framenum'])
                 if auto_completion:
                     for duration in range(1, frame["duration"]):
                         self.symbol_images[frame_name].save(os.path.join(symbol_path, f"{symbol_name}-{frame['framenum'] + duration}'(duration{frame['framenum']}').png"))

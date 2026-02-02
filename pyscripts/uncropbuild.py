@@ -30,7 +30,7 @@ def paste(dst_img, src_img, box):
     # 合并并写回
     result = Image.merge("RGBA", dst_channels)
     dst_img.paste(result)
-def process_json_and_images(json_path):
+def process_json_and_images(json_path,scale):
     # 读取 JSON 文件
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -47,10 +47,10 @@ def process_json_and_images(json_path):
         print(f"处理部件: {part_name}")
         for frame in frames:
             framenum = frame["framenum"]
-            x = -frame["x"]
-            y = -frame["y"]
-            w = frame["w"]
-            h = frame["h"]
+            x = int(-frame["x"])
+            y = int(-frame["y"])
+            w = int(frame["w"])
+            h = int(frame["h"])
 
             # 构建图片路径: {part_name}/{part_name}-{framenum}.png
             img_filename = f"{part_name}-{framenum}.png"
@@ -62,8 +62,8 @@ def process_json_and_images(json_path):
                 continue
 
             # 计算新尺寸
-            new_w = int(w + 2 * abs(x))
-            new_h = int(h + 2 * abs(y))
+            new_w = int((w + 2 * abs(x))*scale)
+            new_h = int((h + 2 * abs(y))*scale)
 
             # 打开原图（确保有 alpha 通道）
             with Image.open(img_path) as img:
@@ -105,13 +105,14 @@ def process_json_and_images(json_path):
     print(f"✅ 所有处理完成，JSON 已更新: {json_path}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("用法: python script.py <json_file_path>")
+    if len(sys.argv) <2:
+        print("python uncropbuild.py <json_file_path> <scale|1>")
         sys.exit(1)
 
     json_file = sys.argv[1]
+    scale=float(sys.argv[2]) if len(sys.argv)>2 else 1
     if not os.path.isfile(json_file):
         print(f"错误: 文件不存在 {json_file}")
         sys.exit(1)
 
-    process_json_and_images(json_file)
+    process_json_and_images(json_file,scale)
